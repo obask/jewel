@@ -51,3 +51,5 @@ gradleEnterprise {
         termsOfServiceAgree = "yes"
     }
 }
+include("markdown:commonmark-extensions")
+findProject(":markdown:commonmark-extensions")?.name = "commonmark-extensions"

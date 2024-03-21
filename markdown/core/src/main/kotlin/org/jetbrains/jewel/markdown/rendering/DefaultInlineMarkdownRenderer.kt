@@ -7,6 +7,8 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.UrlAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
+import org.commonmark.ext.gfm.strikethrough.Strikethrough
+import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.renderer.text.TextContentRenderer
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.markdown.InlineMarkdown
@@ -17,8 +19,16 @@ public open class DefaultInlineMarkdownRenderer(rendererExtensions: List<Markdow
 
     public constructor(vararg extensions: MarkdownProcessorExtension) : this(extensions.toList())
 
+    private val strikethroughExtension = StrikethroughExtension.create()
+
+    private val commonMarkParser =
+        Parser.builder()
+            .extensions(listOf(strikethroughExtension))
+            .extensions(rendererExtensions.map { it.parserExtension }).build()
+
     private val plainTextRenderer =
         TextContentRenderer.builder()
+            .extensions(listOf(strikethroughExtension))
             .extensions(rendererExtensions.map { it.textRendererExtension })
             .build()
 
@@ -42,6 +52,10 @@ public open class DefaultInlineMarkdownRenderer(rendererExtensions: List<Markdow
 
                 is InlineMarkdown.Emphasis -> {
                     withStyles(styling.emphasis, child) { appendInlineMarkdownFrom(it.children, styling) }
+                }
+
+                is Strikethrough -> {
+                    withStyles(styling.strikethrough, child) { appendInlineMarkdownFrom(it, styling) }
                 }
 
                 is InlineMarkdown.StrongEmphasis -> {

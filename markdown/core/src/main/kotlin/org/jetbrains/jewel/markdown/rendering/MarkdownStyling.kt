@@ -292,6 +292,7 @@ public class InlinesStyling(
     public val link: SpanStyle,
     public val emphasis: SpanStyle,
     public val strongEmphasis: SpanStyle,
+    public val strikethrough: SpanStyle,
     public val inlineHtml: SpanStyle,
     public val renderInlineHtml: Boolean,
 ) {
