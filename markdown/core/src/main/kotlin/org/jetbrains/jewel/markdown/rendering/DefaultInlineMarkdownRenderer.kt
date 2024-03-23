@@ -19,32 +19,23 @@ import org.commonmark.node.Paragraph
 import org.commonmark.node.SoftLineBreak
 import org.commonmark.node.StrongEmphasis
 import org.commonmark.node.Text
-import org.commonmark.parser.Parser
 import org.commonmark.renderer.text.TextContentRenderer
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
-import org.jetbrains.jewel.markdown.InlineMarkdown
-import org.jetbrains.jewel.markdown.extensions.MarkdownProcessorExtension
 
 @ExperimentalJewelApi
-public open class DefaultInlineMarkdownRenderer(rendererExtensions: List<MarkdownProcessorExtension>) : InlineMarkdownRenderer {
-
-    public constructor(vararg extensions: MarkdownProcessorExtension) : this(extensions.toList())
-
-    private val commonMarkParser =
-        Parser.builder().extensions(rendererExtensions.map { it.parserExtension }).build()
+public open class DefaultInlineMarkdownRenderer : InlineMarkdownRenderer {
 
     private val plainTextRenderer =
         TextContentRenderer.builder()
-            .extensions(rendererExtensions.map { it.textRendererExtension })
+//            .extensions(rendererExtensions.map { it.textRendererExtension })
             .build()
 
     public override fun renderAsAnnotatedString(
-        inlineMarkdown: InlineMarkdown,
+        inlineMarkdown: Node,
         styling: InlinesStyling,
     ): AnnotatedString =
         buildAnnotatedString {
-            val node = commonMarkParser.parse(inlineMarkdown.content)
-            appendInlineMarkdownFrom(node, styling)
+            appendInlineMarkdownFrom(inlineMarkdown, styling)
         }
 
     @OptIn(ExperimentalTextApi::class)

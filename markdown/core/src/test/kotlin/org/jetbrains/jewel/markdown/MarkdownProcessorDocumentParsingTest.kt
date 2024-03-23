@@ -27,7 +27,7 @@ import org.junit.Test
 ) // All used in purposefully odd Markdown
 class MarkdownProcessorDocumentParsingTest {
 
-    private val processor = MarkdownProcessor()
+    private val processor = MarkdownProcessor(extensions)
 
     @Test
     fun `should parse spec sample 1 correctly (Tabs)`() {

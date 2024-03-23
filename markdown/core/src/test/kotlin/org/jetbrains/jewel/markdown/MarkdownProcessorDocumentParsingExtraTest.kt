@@ -5,7 +5,7 @@ import org.junit.Test
 
 class MarkdownProcessorDocumentParsingExtraTest {
 
-    private val processor = MarkdownProcessor()
+    private val processor = MarkdownProcessor(extensions)
 
     @Test
     fun `should parse spec sample 461b correctly (Emphasis and strong emphasis)`() {

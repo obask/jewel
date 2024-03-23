@@ -1,7 +1,6 @@
 package org.jetbrains.jewel.markdown.extensions
 
 import org.commonmark.node.CustomBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock
 import org.jetbrains.jewel.markdown.processing.MarkdownProcessor
 
 public interface MarkdownBlockProcessorExtension {
@@ -19,5 +18,5 @@ public interface MarkdownBlockProcessorExtension {
      * [block], as implementations might throw an exception for unsupported
      * block types.
      */
-    public fun processMarkdownBlock(block: CustomBlock, processor: MarkdownProcessor): MarkdownBlock.Extension?
+    public fun processMarkdownBlock(block: CustomBlock, processor: MarkdownProcessor): CustomBlock
 }

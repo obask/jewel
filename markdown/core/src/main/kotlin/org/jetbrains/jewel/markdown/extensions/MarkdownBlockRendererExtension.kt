@@ -1,8 +1,7 @@
 package org.jetbrains.jewel.markdown.extensions
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.jewel.markdown.MarkdownBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.Extension
+import org.commonmark.node.CustomBlock
 import org.jetbrains.jewel.markdown.rendering.InlineMarkdownRenderer
 import org.jetbrains.jewel.markdown.rendering.MarkdownBlockRenderer
 
@@ -13,7 +12,7 @@ import org.jetbrains.jewel.markdown.rendering.MarkdownBlockRenderer
 public interface MarkdownBlockRendererExtension {
 
     /** Check whether the provided [block] can be rendered by this extension. */
-    public fun canRender(block: Extension): Boolean
+    public fun canRender(block: CustomBlock): Boolean
 
     /**
      * Render a [MarkdownBlock.Extension] as a native Composable. Note that if
@@ -21,7 +20,7 @@ public interface MarkdownBlockRendererExtension {
      */
     @Composable
     public fun render(
-        block: Extension,
+        block: CustomBlock,
         blockRenderer: MarkdownBlockRenderer,
         inlineRenderer: InlineMarkdownRenderer,
     )

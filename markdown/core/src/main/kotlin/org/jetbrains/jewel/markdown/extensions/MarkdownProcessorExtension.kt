@@ -4,7 +4,6 @@ import org.commonmark.node.CustomBlock
 import org.commonmark.parser.Parser.ParserExtension
 import org.commonmark.renderer.text.TextContentRenderer.TextContentRendererExtension
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
-import org.jetbrains.jewel.markdown.MarkdownBlock
 
 /** An extension for the Jewel Markdown processing engine. */
 @ExperimentalJewelApi

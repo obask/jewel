@@ -46,32 +46,27 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.dp
+import org.commonmark.node.Block
+import org.commonmark.node.BlockQuote
+import org.commonmark.node.BulletList
+import org.commonmark.node.CustomBlock
+import org.commonmark.node.FencedCodeBlock
+import org.commonmark.node.Heading
+import org.commonmark.node.HtmlBlock
+import org.commonmark.node.Image
+import org.commonmark.node.IndentedCodeBlock
+import org.commonmark.node.ListBlock
+import org.commonmark.node.ListItem
+import org.commonmark.node.Node
+import org.commonmark.node.OrderedList
+import org.commonmark.node.Paragraph
+import org.commonmark.node.ThematicBreak
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.foundation.theme.LocalContentColor
-import org.jetbrains.jewel.markdown.BlockWithInlineMarkdown
-import org.jetbrains.jewel.markdown.MarkdownBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.BlockQuote
-import org.jetbrains.jewel.markdown.MarkdownBlock.CodeBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.CodeBlock.FencedCodeBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.CodeBlock.IndentedCodeBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.Extension
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading.H1
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading.H2
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading.H3
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading.H4
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading.H5
-import org.jetbrains.jewel.markdown.MarkdownBlock.Heading.H6
-import org.jetbrains.jewel.markdown.MarkdownBlock.HtmlBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.Image
-import org.jetbrains.jewel.markdown.MarkdownBlock.ListBlock
-import org.jetbrains.jewel.markdown.MarkdownBlock.ListBlock.OrderedList
-import org.jetbrains.jewel.markdown.MarkdownBlock.ListBlock.UnorderedList
-import org.jetbrains.jewel.markdown.MarkdownBlock.ListItem
-import org.jetbrains.jewel.markdown.MarkdownBlock.Paragraph
-import org.jetbrains.jewel.markdown.MarkdownBlock.ThematicBreak
+import org.jetbrains.jewel.markdown.MimeType
 import org.jetbrains.jewel.markdown.extensions.MarkdownRendererExtension
+import org.jetbrains.jewel.markdown.processing.forEachChild
 import org.jetbrains.jewel.ui.Orientation.Horizontal
 import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
@@ -85,7 +80,7 @@ public open class DefaultMarkdownBlockRenderer(
 ) : MarkdownBlockRenderer {
 
     @Composable
-    override fun render(blocks: List<MarkdownBlock>) {
+    override fun render(blocks: List<Node>) {
         Column(verticalArrangement = Arrangement.spacedBy(rootStyling.blockVerticalSpacing)) {
             for (block in blocks) {
                 render(block)
@@ -94,29 +89,37 @@ public open class DefaultMarkdownBlockRenderer(
     }
 
     @Composable
-    override fun render(block: MarkdownBlock) {
+    override fun render(block: Node) {
         when (block) {
             is BlockQuote -> render(block, rootStyling.blockQuote)
             is FencedCodeBlock -> render(block, rootStyling.code.fenced)
             is IndentedCodeBlock -> render(block, rootStyling.code.indented)
-            is H1 -> render(block, rootStyling.heading.h1)
-            is H2 -> render(block, rootStyling.heading.h2)
-            is H3 -> render(block, rootStyling.heading.h3)
-            is H4 -> render(block, rootStyling.heading.h4)
-            is H5 -> render(block, rootStyling.heading.h5)
-            is H6 -> render(block, rootStyling.heading.h6)
+            is Heading -> when (block.level) {
+                1 -> render(block, rootStyling.heading.h1)
+                2 -> render(block, rootStyling.heading.h2)
+                3 -> render(block, rootStyling.heading.h3)
+                4 -> render(block, rootStyling.heading.h4)
+                5 -> render(block, rootStyling.heading.h5)
+                6 -> render(block, rootStyling.heading.h6)
+            }
+
             is HtmlBlock -> render(block, rootStyling.htmlBlock)
             is Image -> render(block, rootStyling.image)
+            is BulletList -> render(block, rootStyling.list.unordered)
             is OrderedList -> render(block, rootStyling.list.ordered)
-            is UnorderedList -> render(block, rootStyling.list.unordered)
             is ListItem -> render(block)
             is Paragraph -> render(block, rootStyling.paragraph)
-            ThematicBreak -> renderThematicBreak(rootStyling.thematicBreak)
-            is Extension -> {
+            is ThematicBreak -> renderThematicBreak(rootStyling.thematicBreak)
+            is CustomBlock -> {
                 rendererExtensions.find { it.blockRenderer.canRender(block) }
                     ?.blockRenderer?.render(block, this, inlineRenderer)
             }
         }
+    }
+
+    @Composable
+    override fun render(block: Block) {
+        TODO("Not yet implemented")
     }
 
     @Composable
@@ -127,83 +130,11 @@ public open class DefaultMarkdownBlockRenderer(
 
     @Composable
     override fun render(block: Heading, styling: MarkdownStyling.Heading) {
-        when (block) {
-            is H1 -> render(block, styling)
-            is H2 -> render(block, styling)
-            is H3 -> render(block, styling)
-            is H4 -> render(block, styling)
-            is H5 -> render(block, styling)
-            is H6 -> render(block, styling)
-        }
+        TODO("Not yet implemented")
     }
 
     @Composable
-    override fun render(block: H1, styling: MarkdownStyling.Heading.H1) {
-        val renderedContent = rememberRenderedContent(block, styling.inlinesStyling)
-        Heading(
-            renderedContent,
-            styling.inlinesStyling.textStyle,
-            styling.padding,
-            styling.underlineWidth,
-            styling.underlineColor,
-            styling.underlineGap,
-        )
-    }
-
-    @Composable
-    override fun render(block: H2, styling: MarkdownStyling.Heading.H2) {
-        val renderedContent = rememberRenderedContent(block, styling.inlinesStyling)
-        Heading(
-            renderedContent,
-            styling.inlinesStyling.textStyle,
-            styling.padding,
-            styling.underlineWidth,
-            styling.underlineColor,
-            styling.underlineGap,
-        )
-    }
-
-    @Composable
-    override fun render(block: H3, styling: MarkdownStyling.Heading.H3) {
-        val renderedContent = rememberRenderedContent(block, styling.inlinesStyling)
-        Heading(
-            renderedContent,
-            styling.inlinesStyling.textStyle,
-            styling.padding,
-            styling.underlineWidth,
-            styling.underlineColor,
-            styling.underlineGap,
-        )
-    }
-
-    @Composable
-    override fun render(block: H4, styling: MarkdownStyling.Heading.H4) {
-        val renderedContent = rememberRenderedContent(block, styling.inlinesStyling)
-        Heading(
-            renderedContent,
-            styling.inlinesStyling.textStyle,
-            styling.padding,
-            styling.underlineWidth,
-            styling.underlineColor,
-            styling.underlineGap,
-        )
-    }
-
-    @Composable
-    override fun render(block: H5, styling: MarkdownStyling.Heading.H5) {
-        val renderedContent = rememberRenderedContent(block, styling.inlinesStyling)
-        Heading(
-            renderedContent,
-            styling.inlinesStyling.textStyle,
-            styling.padding,
-            styling.underlineWidth,
-            styling.underlineColor,
-            styling.underlineGap,
-        )
-    }
-
-    @Composable
-    override fun render(block: H6, styling: MarkdownStyling.Heading.H6) {
+    override fun render(block: Heading, styling: MarkdownStyling.Heading.HX) {
         val renderedContent = rememberRenderedContent(block, styling.inlinesStyling)
         Heading(
             renderedContent,
@@ -258,7 +189,7 @@ public open class DefaultMarkdownBlockRenderer(
             verticalArrangement = Arrangement.spacedBy(rootStyling.blockVerticalSpacing),
         ) {
             CompositionLocalProvider(LocalContentColor provides styling.textColor) {
-                render(block.content)
+                render(buildList { block.forEachChild { add(it) } })
             }
         }
     }
@@ -267,7 +198,7 @@ public open class DefaultMarkdownBlockRenderer(
     override fun render(block: ListBlock, styling: MarkdownStyling.List) {
         when (block) {
             is OrderedList -> render(block, styling.ordered)
-            is UnorderedList -> render(block, styling.unordered)
+            is BulletList -> render(block, styling.unordered)
         }
     }
 
@@ -284,11 +215,12 @@ public open class DefaultMarkdownBlockRenderer(
             modifier = Modifier.padding(styling.padding),
             verticalArrangement = Arrangement.spacedBy(itemSpacing),
         ) {
-            for ((index, item) in block.items.withIndex()) {
+            var index = 0
+            block.forEachChild { item ->
                 Row {
-                    val number = block.startFrom + index
+                    val number = block.markerStartNumber + index
                     Text(
-                        text = "$number${block.delimiter}",
+                        text = "$number${block.markerDelimiter}",
                         style = styling.numberStyle,
                         modifier = Modifier.widthIn(min = styling.numberMinWidth)
                             .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
@@ -299,12 +231,13 @@ public open class DefaultMarkdownBlockRenderer(
 
                     render(item)
                 }
+                index += 1
             }
         }
     }
 
     @Composable
-    override fun render(block: UnorderedList, styling: MarkdownStyling.List.Unordered) {
+    override fun render(block: BulletList, styling: MarkdownStyling.List.Unordered) {
         val itemSpacing =
             if (block.isTight) {
                 styling.itemVerticalSpacingTight
@@ -316,7 +249,7 @@ public open class DefaultMarkdownBlockRenderer(
             modifier = Modifier.padding(styling.padding),
             verticalArrangement = Arrangement.spacedBy(itemSpacing),
         ) {
-            for (item in block.items) {
+            block.forEachChild { item ->
                 Row {
                     Text(
                         text = styling.bullet.toString(),
@@ -335,15 +268,7 @@ public open class DefaultMarkdownBlockRenderer(
     @Composable
     override fun render(block: ListItem) {
         Column(verticalArrangement = Arrangement.spacedBy(rootStyling.blockVerticalSpacing)) {
-            render(block.content)
-        }
-    }
-
-    @Composable
-    override fun render(block: CodeBlock, styling: MarkdownStyling.Code) {
-        when (block) {
-            is FencedCodeBlock -> render(block, styling.fenced)
-            is IndentedCodeBlock -> render(block, styling.indented)
+            render(buildList { block.forEachChild { add(it) } })
         }
     }
 
@@ -356,7 +281,7 @@ public open class DefaultMarkdownBlockRenderer(
                 .then(if (styling.fillWidth) Modifier.fillMaxWidth() else Modifier),
         ) {
             Text(
-                text = block.content,
+                text = block.literal,
                 style = styling.textStyle,
                 modifier = Modifier.padding(styling.padding)
                     .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
@@ -372,10 +297,11 @@ public open class DefaultMarkdownBlockRenderer(
                 .border(styling.borderWidth, styling.borderColor, styling.shape)
                 .then(if (styling.fillWidth) Modifier.fillMaxWidth() else Modifier),
         ) {
+            val mimeType = remember { MimeType.Known.fromMarkdownLanguageName(block.info) }
             Column(Modifier.padding(styling.padding)) {
-                if (block.mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Top) {
+                if (mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Top) {
                     FencedBlockInfo(
-                        block.mimeType.displayName(),
+                        mimeType.displayName(),
                         styling.infoPosition.horizontalAlignment
                             ?: error("No horizontal alignment for position ${styling.infoPosition.name}"),
                         styling.infoTextStyle,
@@ -384,14 +310,14 @@ public open class DefaultMarkdownBlockRenderer(
                 }
 
                 Text(
-                    text = block.content,
+                    text = block.literal,
                     style = styling.textStyle,
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
                 )
 
-                if (block.mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Bottom) {
+                if (mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Bottom) {
                     FencedBlockInfo(
-                        block.mimeType.displayName(),
+                        mimeType.displayName(),
                         styling.infoPosition.horizontalAlignment
                             ?: error("No horizontal alignment for position ${styling.infoPosition.name}"),
                         styling.infoTextStyle,
@@ -437,9 +363,9 @@ public open class DefaultMarkdownBlockRenderer(
     }
 
     @Composable
-    private fun rememberRenderedContent(block: BlockWithInlineMarkdown, styling: InlinesStyling) =
-        remember(block.inlineContent, styling) {
-            inlineRenderer.renderAsAnnotatedString(block.inlineContent, styling)
+    private fun rememberRenderedContent(block: Node, styling: InlinesStyling) =
+        remember(block, styling) {
+            inlineRenderer.renderAsAnnotatedString(block, styling)
         }
 
     @OptIn(ExperimentalTextApi::class)

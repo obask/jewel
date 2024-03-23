@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.commonmark.node.Node
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.markdown.dark
 import org.jetbrains.jewel.intui.markdown.light
@@ -30,7 +31,6 @@ import org.jetbrains.jewel.intui.markdown.styling.dark
 import org.jetbrains.jewel.intui.markdown.styling.extension.github.alerts.dark
 import org.jetbrains.jewel.intui.markdown.styling.extension.github.alerts.light
 import org.jetbrains.jewel.intui.markdown.styling.light
-import org.jetbrains.jewel.markdown.MarkdownBlock
 import org.jetbrains.jewel.markdown.extensions.github.alerts.AlertStyling
 import org.jetbrains.jewel.markdown.extensions.github.alerts.GitHubAlertProcessorExtension
 import org.jetbrains.jewel.markdown.extensions.github.alerts.GitHubAlertRendererExtension
@@ -49,7 +49,7 @@ internal fun MarkdownPreview(rawMarkdown: String, modifier: Modifier = Modifier)
     val markdownStyling =
         remember(isDark) { if (isDark) MarkdownStyling.dark() else MarkdownStyling.light() }
 
-    var markdownBlocks by remember { mutableStateOf(emptyList<MarkdownBlock>()) }
+    var markdownBlocks by remember { mutableStateOf(emptyList<Node>()) }
     val extensions = listOf(GitHubAlertProcessorExtension)
     val processor = remember { MarkdownProcessor(extensions) }
 

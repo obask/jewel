@@ -15,7 +15,6 @@ import org.commonmark.renderer.text.TextContentNodeRendererContext
 import org.commonmark.renderer.text.TextContentRenderer
 import org.commonmark.renderer.text.TextContentRenderer.TextContentRendererExtension
 import org.commonmark.text.Characters
-import org.jetbrains.jewel.markdown.MarkdownBlock
 import org.jetbrains.jewel.markdown.extensions.MarkdownBlockProcessorExtension
 import org.jetbrains.jewel.markdown.extensions.MarkdownBlockRendererExtension
 import org.jetbrains.jewel.markdown.extensions.MarkdownProcessorExtension
@@ -26,6 +25,7 @@ import org.jetbrains.jewel.markdown.extensions.github.alerts.AlertBlock.Note
 import org.jetbrains.jewel.markdown.extensions.github.alerts.AlertBlock.Tip
 import org.jetbrains.jewel.markdown.extensions.github.alerts.AlertBlock.Warning
 import org.jetbrains.jewel.markdown.processing.MarkdownProcessor
+import org.jetbrains.jewel.markdown.processing.forEachChild
 import org.jetbrains.jewel.markdown.rendering.MarkdownStyling
 
 public object GitHubAlertProcessorExtension : MarkdownProcessorExtension {
@@ -40,10 +40,8 @@ public object GitHubAlertProcessorExtension : MarkdownProcessorExtension {
 
         override fun canProcess(block: CustomBlock): Boolean = block is AlertBlock
 
-        override fun processMarkdownBlock(block: CustomBlock, processor: MarkdownProcessor): MarkdownBlock.Extension? {
-            val children = processor.processChildren(block)
-
-            if (children.isEmpty()) return null
+        override fun processMarkdownBlock(block: CustomBlock, processor: MarkdownProcessor): CustomBlock {
+            val children: List<Node> = buildList { block.forEachChild { add(it) } }
 
             return when (block) {
                 is Caution -> Alert.Caution(children)
