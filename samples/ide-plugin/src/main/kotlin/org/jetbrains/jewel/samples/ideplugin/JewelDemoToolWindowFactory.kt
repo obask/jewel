@@ -14,12 +14,18 @@ import kotlinx.coroutines.cancel
 import org.jetbrains.jewel.bridge.addComposeTab
 import org.jetbrains.jewel.samples.ideplugin.releasessample.ReleasesSampleCompose
 import org.jetbrains.jewel.samples.ideplugin.releasessample.ReleasesSamplePanel
+import org.jetbrains.jewel.samples.ideplugin.releasessample.markdown.MarkdownCompose
 
 @Suppress("unused")
 @ExperimentalCoroutinesApi
 internal class JewelDemoToolWindowFactory : ToolWindowFactory, DumbAware {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+
+        toolWindow.addComposeTab("Markdown Sample") {
+            MarkdownCompose()
+        }
+
         toolWindow.addComposeTab("Components") {
             ComponentShowcaseTab()
         }

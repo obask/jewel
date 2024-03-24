@@ -26,6 +26,8 @@ dependencies {
     implementation(projects.ideLafBridge) {
         exclude(group = "org.jetbrains.kotlinx")
     }
+    implementation(projects.markdown.core)
+    implementation(projects.markdown.extensionGfmAlerts)
 
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material")

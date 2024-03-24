@@ -1,4 +1,4 @@
-package org.jetbrains.jewel.samples.standalone.view.markdown
+package org.jetbrains.jewel.samples.ideplugin.releasessample.markdown
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -20,10 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import com.darkrockstudios.libraries.mpfilepicker.JvmFile
+import com.intellij.icons.AllIcons
 import org.jetbrains.jewel.foundation.theme.JewelTheme
-import org.jetbrains.jewel.samples.standalone.StandaloneSampleIcons
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Icon
@@ -59,17 +57,6 @@ private fun ControlsRow(onMarkdownChange: (String) -> Unit, modifier: Modifier =
             Text("Load file...")
         }
 
-        FilePicker(show = showFilePicker, fileExtensions = listOf("md")) { platformFile ->
-            showFilePicker = false
-
-            if (platformFile != null) {
-                val jvmFile = platformFile as JvmFile
-                val contents = jvmFile.platformFile.readText()
-
-                onMarkdownChange(contents)
-            }
-        }
-
         OutlinedButton(onClick = { onMarkdownChange("") }) { Text("Clear") }
 
         Box {
@@ -78,9 +65,9 @@ private fun ControlsRow(onMarkdownChange: (String) -> Unit, modifier: Modifier =
                 Text("Load preset")
                 Spacer(Modifier.width(8.dp))
                 Icon(
-                    resource = "expui/general/chevronDown.svg",
+                    resource = "actions/close.svg",
                     contentDescription = null,
-                    iconClass = StandaloneSampleIcons::class.java,
+                    iconClass = AllIcons::class.java,
                 )
             }
 
