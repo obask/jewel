@@ -64,6 +64,7 @@ import org.jetbrains.jewel.markdown.MarkdownBlock.ListBlock.OrderedList
 import org.jetbrains.jewel.markdown.MarkdownBlock.ListItem
 import org.jetbrains.jewel.markdown.MarkdownBlock.Paragraph
 import org.jetbrains.jewel.markdown.MarkdownBlock.ThematicBreak
+import org.jetbrains.jewel.markdown.MimeType
 import org.jetbrains.jewel.markdown.extensions.MarkdownRendererExtension
 import org.jetbrains.jewel.ui.Orientation.Horizontal
 import org.jetbrains.jewel.ui.component.Divider
@@ -90,16 +91,17 @@ public open class DefaultMarkdownBlockRenderer(
     @Composable
     override fun render(block: MarkdownBlock) {
         when (block) {
+            is Paragraph -> render(block, rootStyling.paragraph)
+            is Heading -> render(block, rootStyling.heading)
             is BlockQuote -> render(block, rootStyling.blockQuote)
             is FencedCodeBlock -> render(block, rootStyling.code.fenced)
             is IndentedCodeBlock -> render(block, rootStyling.code.indented)
-            is Heading -> render(block, rootStyling.heading)
             is HtmlBlock -> render(block, rootStyling.htmlBlock)
             is OrderedList -> render(block, rootStyling.list.ordered)
             is BulletList -> render(block, rootStyling.list.unordered)
+            is ListBlock -> render(block, rootStyling.list)
             is ListItem -> render(block)
-            is Paragraph -> render(block, rootStyling.paragraph)
-            ThematicBreak -> renderThematicBreak(rootStyling.thematicBreak)
+            is ThematicBreak -> renderThematicBreak(rootStyling.thematicBreak)
             is CustomBlock -> {
                 rendererExtensions.find { it.blockRenderer.canRender(block) }
                     ?.blockRenderer?.render(block, this, inlineRenderer)
@@ -182,23 +184,20 @@ public open class DefaultMarkdownBlockRenderer(
             verticalArrangement = Arrangement.spacedBy(rootStyling.blockVerticalSpacing),
         ) {
             CompositionLocalProvider(LocalContentColor provides styling.textColor) {
-                render(block.content)
+                render(block.children)
             }
         }
     }
 
     @Composable
     override fun render(block: ListBlock, styling: MarkdownStyling.List) {
-        when (block) {
-            is OrderedList -> render(block, styling.ordered)
-            is BulletList -> render(block, styling.unordered)
-        }
+        error("this function shouldn't be used in CommonMark core spec")
     }
 
     @Composable
     override fun render(block: OrderedList, styling: MarkdownStyling.List.Ordered) {
         val itemSpacing =
-            if (block.isTight) {
+            if (block.value.isTight) {
                 styling.itemVerticalSpacingTight
             } else {
                 styling.itemVerticalSpacing
@@ -208,11 +207,11 @@ public open class DefaultMarkdownBlockRenderer(
             modifier = Modifier.padding(styling.padding),
             verticalArrangement = Arrangement.spacedBy(itemSpacing),
         ) {
-            for ((index, item) in block.items.withIndex()) {
+            for ((index, item) in block.children.withIndex()) {
                 Row {
-                    val number = block.startFrom + index
+                    val number = block.value.markerStartNumber + index
                     Text(
-                        text = "$number${block.delimiter}",
+                        text = "$number${block.value.markerDelimiter}",
                         style = styling.numberStyle,
                         modifier = Modifier.widthIn(min = styling.numberMinWidth)
                             .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
@@ -230,7 +229,7 @@ public open class DefaultMarkdownBlockRenderer(
     @Composable
     override fun render(block: BulletList, styling: MarkdownStyling.List.Unordered) {
         val itemSpacing =
-            if (block.isTight) {
+            if (block.value.isTight) {
                 styling.itemVerticalSpacingTight
             } else {
                 styling.itemVerticalSpacing
@@ -240,7 +239,7 @@ public open class DefaultMarkdownBlockRenderer(
             modifier = Modifier.padding(styling.padding),
             verticalArrangement = Arrangement.spacedBy(itemSpacing),
         ) {
-            for (item in block.items) {
+            for (item in block.children) {
                 Row {
                     Text(
                         text = styling.bullet.toString(),
@@ -259,7 +258,7 @@ public open class DefaultMarkdownBlockRenderer(
     @Composable
     override fun render(block: ListItem) {
         Column(verticalArrangement = Arrangement.spacedBy(rootStyling.blockVerticalSpacing)) {
-            render(block.content)
+            render(block.children)
         }
     }
 
@@ -280,7 +279,7 @@ public open class DefaultMarkdownBlockRenderer(
                 .then(if (styling.fillWidth) Modifier.fillMaxWidth() else Modifier),
         ) {
             Text(
-                text = block.content,
+                text = block.value.literal,
                 style = styling.textStyle,
                 modifier = Modifier.padding(styling.padding)
                     .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
@@ -297,9 +296,10 @@ public open class DefaultMarkdownBlockRenderer(
                 .then(if (styling.fillWidth) Modifier.fillMaxWidth() else Modifier),
         ) {
             Column(Modifier.padding(styling.padding)) {
-                if (block.mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Top) {
+                val mimeType = remember { MimeType.Known.fromMarkdownLanguageName(block.value.info) }
+                if (mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Top) {
                     FencedBlockInfo(
-                        block.mimeType.displayName(),
+                        mimeType.displayName(),
                         styling.infoPosition.horizontalAlignment
                             ?: error("No horizontal alignment for position ${styling.infoPosition.name}"),
                         styling.infoTextStyle,
@@ -308,14 +308,14 @@ public open class DefaultMarkdownBlockRenderer(
                 }
 
                 Text(
-                    text = block.content,
+                    text = block.value.literal,
                     style = styling.textStyle,
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
                 )
 
-                if (block.mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Bottom) {
+                if (mimeType != null && styling.infoPosition.verticalAlignment == Alignment.Bottom) {
                     FencedBlockInfo(
-                        block.mimeType.displayName(),
+                        mimeType.displayName(),
                         styling.infoPosition.horizontalAlignment
                             ?: error("No horizontal alignment for position ${styling.infoPosition.name}"),
                         styling.infoTextStyle,

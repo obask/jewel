@@ -1,6 +1,5 @@
 package org.jetbrains.jewel.markdown
 
-import org.jetbrains.jewel.markdown.MarkdownBlock.ThematicBreak
 import org.jetbrains.jewel.markdown.processing.MarkdownProcessor
 import org.junit.Ignore
 import org.junit.Test
@@ -211,7 +210,7 @@ class MarkdownProcessorDocumentParsingTest {
          * Expected HTML:
          * <hr />
          */
-        parsed.assertEquals(ThematicBreak)
+        parsed.assertEquals(thematicBreak())
     }
 
     @Test
@@ -724,9 +723,9 @@ class MarkdownProcessorDocumentParsingTest {
          * <hr />
          */
         parsed.assertEquals(
-            ThematicBreak,
-            ThematicBreak,
-            ThematicBreak,
+            thematicBreak(),
+            thematicBreak(),
+            thematicBreak(),
         )
     }
 
@@ -792,9 +791,9 @@ class MarkdownProcessorDocumentParsingTest {
          * <hr />
          */
         parsed.assertEquals(
-            ThematicBreak,
-            ThematicBreak,
-            ThematicBreak,
+            thematicBreak(),
+            thematicBreak(),
+            thematicBreak(),
         )
     }
 
@@ -837,7 +836,7 @@ class MarkdownProcessorDocumentParsingTest {
          * Expected HTML:
          * <hr />
          */
-        parsed.assertEquals(ThematicBreak)
+        parsed.assertEquals(thematicBreak())
     }
 
     @Test
@@ -848,7 +847,7 @@ class MarkdownProcessorDocumentParsingTest {
          * Expected HTML:
          * <hr />
          */
-        parsed.assertEquals(ThematicBreak)
+        parsed.assertEquals(thematicBreak())
     }
 
     @Test
@@ -859,7 +858,7 @@ class MarkdownProcessorDocumentParsingTest {
          * Expected HTML:
          * <hr />
          */
-        parsed.assertEquals(ThematicBreak)
+        parsed.assertEquals(thematicBreak())
     }
 
     @Test
@@ -870,7 +869,7 @@ class MarkdownProcessorDocumentParsingTest {
          * Expected HTML:
          * <hr />
          */
-        parsed.assertEquals(ThematicBreak)
+        parsed.assertEquals(thematicBreak())
     }
 
     @Test
@@ -881,7 +880,7 @@ class MarkdownProcessorDocumentParsingTest {
          * Expected HTML:
          * <hr />
          */
-        parsed.assertEquals(ThematicBreak)
+        parsed.assertEquals(thematicBreak())
     }
 
     @Test
@@ -946,7 +945,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             unorderedList(listItem(paragraph("foo"))),
-            ThematicBreak,
+            thematicBreak(),
             unorderedList(listItem(paragraph("bar"))),
         )
     }
@@ -971,7 +970,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             paragraph("Foo"),
-            ThematicBreak,
+            thematicBreak(),
             paragraph("bar"),
         )
     }
@@ -1023,7 +1022,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             unorderedList(listItem(paragraph("Foo")), bulletMarker = "*"),
-            ThematicBreak,
+            thematicBreak(),
             unorderedList(listItem(paragraph("Bar")), bulletMarker = "*"),
         )
     }
@@ -1051,7 +1050,7 @@ class MarkdownProcessorDocumentParsingTest {
         parsed.assertEquals(
             unorderedList(
                 listItem(paragraph("Foo")),
-                listItem(ThematicBreak),
+                listItem(thematicBreak()),
             ),
         )
     }
@@ -1336,9 +1335,9 @@ class MarkdownProcessorDocumentParsingTest {
          * <hr />
          */
         parsed.assertEquals(
-            ThematicBreak,
+            thematicBreak(),
             heading(level = 2, "foo"),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1530,7 +1529,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             indentedCodeBlock("Foo\n---\n\nFoo"),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1595,7 +1594,7 @@ class MarkdownProcessorDocumentParsingTest {
         parsed.assertEquals(
             paragraph("Foo = ="),
             paragraph("Foo"),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1686,7 +1685,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             blockQuote(paragraph("Foo")),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1733,7 +1732,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             unorderedList(listItem(paragraph("Foo"))),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1780,7 +1779,7 @@ class MarkdownProcessorDocumentParsingTest {
          * <p>Baz</p>
          */
         parsed.assertEquals(
-            ThematicBreak,
+            thematicBreak(),
             heading(level = 2, "Foo"),
             heading(level = 2, "Bar"),
             paragraph("Baz"),
@@ -1822,8 +1821,8 @@ class MarkdownProcessorDocumentParsingTest {
          * <hr />
          */
         parsed.assertEquals(
-            ThematicBreak,
-            ThematicBreak,
+            thematicBreak(),
+            thematicBreak(),
         )
     }
 
@@ -1847,7 +1846,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             unorderedList(listItem(paragraph("foo"))),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1870,7 +1869,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             indentedCodeBlock("foo"),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1894,7 +1893,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             blockQuote(paragraph("foo")),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -1967,7 +1966,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             paragraph("Foo bar"),
-            ThematicBreak,
+            thematicBreak(),
             paragraph("baz"),
         )
     }
@@ -1994,7 +1993,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             paragraph("Foo bar"),
-            ThematicBreak,
+            thematicBreak(),
             paragraph("baz"),
         )
     }
@@ -2245,7 +2244,7 @@ class MarkdownProcessorDocumentParsingTest {
             indentedCodeBlock("foo"),
             heading(level = 2, "Heading"),
             indentedCodeBlock("foo"),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -5190,7 +5189,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             blockQuote(paragraph("foo")),
-            ThematicBreak,
+            thematicBreak(),
         )
     }
 
@@ -5472,7 +5471,7 @@ class MarkdownProcessorDocumentParsingTest {
          */
         parsed.assertEquals(
             blockQuote(paragraph("aaa")),
-            ThematicBreak,
+            thematicBreak(),
             blockQuote(paragraph("bbb")),
         )
     }
@@ -7537,7 +7536,7 @@ class MarkdownProcessorDocumentParsingTest {
                 listItem(paragraph("b")),
                 isTight = false,
             ),
-            indentedCodeBlock("3. c"),
+            indentedCodeBlock("3. c\n"),
         )
     }
 
