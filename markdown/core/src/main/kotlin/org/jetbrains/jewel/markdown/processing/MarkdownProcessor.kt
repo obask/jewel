@@ -47,7 +47,9 @@ public class MarkdownProcessor(private val extensions: List<MarkdownProcessorExt
     public constructor(vararg extensions: MarkdownProcessorExtension) : this(extensions.toList())
 
     private val commonMarkParser =
-        Parser.builder().extensions(extensions.map { it.parserExtension }).build()
+        Parser.builder()
+            .extensions(listOf(TaskListItemsExtension.create()))
+            .extensions(extensions.map { it.parserExtension }).build()
 
     private val textContentRenderer =
         TextContentRenderer.builder()

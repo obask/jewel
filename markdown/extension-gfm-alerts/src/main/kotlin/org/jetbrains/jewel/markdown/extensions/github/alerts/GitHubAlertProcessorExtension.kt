@@ -72,7 +72,7 @@ private object GitHubAlertCommonMarkExtension : ParserExtension, TextContentRend
         ">\\s+\\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)]\\s*".toRegex(RegexOption.IGNORE_CASE)
 
     override fun extend(parserBuilder: Builder) {
-        parserBuilder.customBlockParserFactory { state, _ ->
+        parserBuilder.customBlockParserFactory { state, x ->
             val line = state.line.content.substring(state.column)
             val matchResult = AlertStartRegex.matchEntire(line)
 

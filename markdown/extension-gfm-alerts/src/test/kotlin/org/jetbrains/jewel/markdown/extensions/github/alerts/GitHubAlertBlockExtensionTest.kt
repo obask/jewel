@@ -68,8 +68,16 @@ class GitHubAlertBlockExtensionTest {
     fun `should parse tip alert`() {
         val rawMarkdown =
             """
+        |## Some other text
+        |
+        |text
+        |with *emphasis*
+        |many lines
+        |
         |> [!TIP]  
         |> Optional information to help a user be more successful.
+        |
+        |
         """
                 .trimMargin()
         val parsed = parser.parse(rawMarkdown)
