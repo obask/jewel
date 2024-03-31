@@ -30,4 +30,5 @@ public interface MarkdownProcessorExtension {
      * [MarkdownBlock.CustomBlock].
      */
     public val processorExtension: MarkdownBlockProcessorExtension
+        get() = object : MarkdownBlockProcessorExtension {}
 }

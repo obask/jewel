@@ -34,6 +34,9 @@ import org.jetbrains.jewel.markdown.MarkdownBlock
 import org.jetbrains.jewel.markdown.extensions.github.alerts.AlertStyling
 import org.jetbrains.jewel.markdown.extensions.github.alerts.GitHubAlertProcessorExtension
 import org.jetbrains.jewel.markdown.extensions.github.alerts.GitHubAlertRendererExtension
+import org.jetbrains.jewel.markdown.extensions.tables.GitHubTableProcessorExtension
+import org.jetbrains.jewel.markdown.extensions.tables.GitHubTableRendererExtension
+import org.jetbrains.jewel.markdown.extensions.tables.TableStyling
 import org.jetbrains.jewel.markdown.processing.MarkdownProcessor
 import org.jetbrains.jewel.markdown.rendering.InlineMarkdownRenderer
 import org.jetbrains.jewel.markdown.rendering.MarkdownBlockRenderer
@@ -50,7 +53,7 @@ internal fun MarkdownPreview(rawMarkdown: String, modifier: Modifier = Modifier)
         remember(isDark) { if (isDark) MarkdownStyling.dark() else MarkdownStyling.light() }
 
     var markdownBlocks by remember { mutableStateOf(emptyList<MarkdownBlock>()) }
-    val extensions = listOf(GitHubAlertProcessorExtension)
+    val extensions = listOf(GitHubAlertProcessorExtension, GitHubTableProcessorExtension)
     val processor = remember { MarkdownProcessor(extensions) }
 
     LaunchedEffect(rawMarkdown) {
@@ -65,7 +68,10 @@ internal fun MarkdownPreview(rawMarkdown: String, modifier: Modifier = Modifier)
             if (isDark) {
                 MarkdownBlockRenderer.dark(
                     styling = markdownStyling,
-                    rendererExtensions = listOf(GitHubAlertRendererExtension(AlertStyling.dark(), markdownStyling)),
+                    rendererExtensions = listOf(
+                        GitHubAlertRendererExtension(AlertStyling.dark(), markdownStyling),
+                        GitHubTableRendererExtension(TableStyling.dark(), markdownStyling),
+                    ),
                     inlineRenderer = InlineMarkdownRenderer.default(extensions),
                 ) { url ->
                     Desktop.getDesktop().browse(URI.create(url))
@@ -73,7 +79,10 @@ internal fun MarkdownPreview(rawMarkdown: String, modifier: Modifier = Modifier)
             } else {
                 MarkdownBlockRenderer.light(
                     styling = markdownStyling,
-                    rendererExtensions = listOf(GitHubAlertRendererExtension(AlertStyling.light(), markdownStyling)),
+                    rendererExtensions = listOf(
+                        GitHubAlertRendererExtension(AlertStyling.light(), markdownStyling),
+                        GitHubTableRendererExtension(TableStyling.light(), markdownStyling),
+                    ),
                     inlineRenderer = InlineMarkdownRenderer.default(extensions),
                 ) { url ->
                     Desktop.getDesktop().browse(URI.create(url))

@@ -1,5 +1,7 @@
 package org.jetbrains.jewel.markdown
 
+import org.commonmark.node.CustomBlock as CMCustomBlock
+
 public sealed interface MarkdownBlock {
 
     public data class BlockQuote(val children: List<MarkdownBlock>) : MarkdownBlock
@@ -18,7 +20,10 @@ public sealed interface MarkdownBlock {
         ) : CodeBlock
     }
 
-    public interface CustomBlock : MarkdownBlock
+    public interface CustomBlock : MarkdownBlock {
+        @JvmInline
+        public value class DefaultCustomBlock(public val nativeBlock: CMCustomBlock) : CustomBlock
+    }
 
     public data class Heading(
         override val inlineContent: List<InlineMarkdown>,
